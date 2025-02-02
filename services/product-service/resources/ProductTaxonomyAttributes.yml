@@ -5,7 +5,20 @@ ProductTaxonomyAttributes:
     AttributeDefinitions:
       - AttributeName: TaxonomyId
         AttributeType: S
+      - AttributeName: ParentId
+        AttributeType: S
+      - AttributeName: Name
+        AttributeType: S
     KeySchema:
       - AttributeName: TaxonomyId
         KeyType: HASH
+    GlobalSecondaryIndexes:
+      - IndexName: ParentIndex
+        KeySchema:
+          - AttributeName: ParentId
+            KeyType: HASH
+          - AttributeName: Name
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
     BillingMode: PAY_PER_REQUEST
