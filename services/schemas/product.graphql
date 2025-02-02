@@ -1,0 +1,35 @@
+type Product {
+  ProductId: String
+  Name: String
+  Description: String
+  Price: Float
+  Category: String
+  Stock: Int
+  CreatedAt: String
+  UpdatedAt: String
+}
+
+type Query {
+  getProduct(input: ProductInput!): Product
+}
+
+type Mutation {
+  createProduct(input: ProductInput): Response
+  updateProduct(input: ProductInput): Response
+  deleteProduct(input: ProductInput): Response
+}
+
+input ProductInput {
+  ProductId: String
+  Name: String
+  Description: String
+  Price: Float
+  Category: String
+  Stock: Int
+}
+
+type Response {
+  statusCode: Int
+  message: String
+  data: AWSJSON
+}

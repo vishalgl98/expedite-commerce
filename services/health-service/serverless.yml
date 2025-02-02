@@ -1,0 +1,35 @@
+service: health-service
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  memorySize: ${self:custom.env.MEMORY_SIZE}
+  stage: ${opt:stage, 'dev'}
+  region: ${self:custom.env.AWS_REGION}
+  timeout: 30
+  deploymentBucket: ${file(../../common/utils/yml-templates/deploymentBucket.yml):deploymentBucket}
+  layers:
+    - arn:aws:lambda:${aws:region}:${aws:accountId}:layer:node-modules-layer-${self:provider.stage}:${self:custom.env.NML_V}
+  environment:
+    SAMPLE_VAR: ${self:custom.env.NML_V}
+    ENV: ${self:provider.stage}
+  iam:
+    role:
+      statements:
+        - ${file(iam/InvokeLambdaIAM.yml):InvokeLambdaIAM}
+        - ${file(iam/AllTableIAM.yml):AllTableIAM}
+
+functions:
+  healthCheck:
+    handler: src/handlers/healthCheck.handler
+    events:
+      - http:
+          method: GET
+          path: /check
+          cors: true
+
+custom:
+  env: ${file(../../.env.${sls:stage}.json)}

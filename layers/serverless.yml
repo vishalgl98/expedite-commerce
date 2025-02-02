@@ -1,0 +1,22 @@
+service: node-modules-layer-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${self:custom.env.AWS_REGION}
+  environment: ${file(../.env.${sls:stage}.json)}
+  deploymentBucket:
+    name: expedite-commerce-deployment-${sls:stage}
+    maxPreviousDeploymentArtifacts: 3
+    blockPublicAccess: true
+    serverSideEncryption: AES256
+    versioning: true
+layers:
+  node-modules-layer-dev:
+    path: node-modules-layer/
+    compatibleRuntimes:
+      - nodejs20.x
+
+custom:
+  env: ${file(../.env.${sls:stage}.json)}

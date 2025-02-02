@@ -1,0 +1,21 @@
+{
+  "name": "expedite-commerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.616.0",
+    "@aws-sdk/lib-dynamodb": "^3.616.0",
+    "uuid": "^10.0.0",
+    "webpack": "^5.95.0"
+  },
+  "devDependencies": {
+    "serverless-appsync-plugin": "^1.14.0",
+    "serverless-webpack": "^5.14.0"
+  }
+}

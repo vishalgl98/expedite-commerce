@@ -1,0 +1,62 @@
+service: expedite-commerce-appsync-api
+
+plugins:
+  - serverless-webpack
+  - serverless-appsync-plugin
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${self:custom.env.AWS_REGION}
+  timeout: 30
+  deploymentBucket:
+    name: expedite-commerce-deployment-${sls:stage}
+    maxPreviousDeploymentArtifacts: 3
+    blockPublicAccess: true
+    serverSideEncryption: AES256
+    versioning: true
+  layers:
+    - arn:aws:lambda:${self:provider.region}:${aws:accountId}:layer:node-modules-layer-${self:provider.stage}:${self:custom.env.NML_V}
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - lambda:InvokeFunction
+            - lambda:InvokeAsync
+          Resource: '*'
+
+functions:
+  helloWorld:
+    handler: helloWorld.handler
+
+custom:
+  appSyncLogLevel:
+    dev: ALL
+    stg: ALL
+    beta: ALL
+    prod: ERROR
+  env: ${file(../../.env.${sls:stage}.json)}
+  appSync:
+    name: expedite-commerce-appsync-api-${self:provider.stage}
+    authenticationType: API_KEY
+    apiKeys:
+      - description: Default API Key
+        expiresAfter: 30d
+    additionalAuthenticationProviders: []
+    logConfig:
+      loggingRoleArn: arn:aws:iam::${aws:accountId}:role/AppSyncLoggingServiceRole
+      level: ${self:custom.appSyncLogLevel.${sls:stage}}
+    mappingTemplatesLocation: mapping-templates
+    # mappingTemplates:
+    #   - type: Query
+    #     field: helloWorld
+    #     dataSource: helloWorldFunction
+    #     request: false
+    #     response: ../../../common/utils/vtl-templates/common.response.vtl
+    # dataSources:
+    #   - type: AWS_LAMBDA
+    #     name: helloWorldFunction
+    #     config:
+    #       functionName: helloWorld

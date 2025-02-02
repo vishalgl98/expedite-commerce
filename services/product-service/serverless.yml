@@ -1,0 +1,83 @@
+service: product-service
+
+plugins:
+  - serverless-webpack
+  - serverless-appsync-plugin
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  memorySize: ${self:custom.env.MEMORY_SIZE}
+  stage: ${opt:stage, 'dev'}
+  region: ${self:custom.env.AWS_REGION}
+  timeout: 30
+  deploymentBucket: ${file(../../common/utils/yml-templates/deploymentBucket.yml):deploymentBucket}
+  layers:
+    - arn:aws:lambda:${aws:region}:${aws:accountId}:layer:node-modules-layer-${self:provider.stage}:${self:custom.env.NML_V}
+  environment:
+    ENV: ${self:provider.stage}
+  iam:
+    role:
+      statements:
+        - ${file(iam/ProductsIAM.yml):ProductsIAM}
+        - ${file(iam/ProductTaxonomyAttributesIAM.yml):ProductTaxonomyAttributesIAM}
+
+resources:
+  Resources:
+    Products: ${file(resources/Products.yml):Products}
+    ProductTaxonomyAttributes: ${file(resources/ProductTaxonomyAttributes.yml):ProductTaxonomyAttributes}
+
+functions:
+  getProduct:
+    handler: functions/getProduct.handler
+  createProduct:
+    handler: functions/createProduct.handler
+  updateProduct:
+    handler: functions/updateProduct.handler
+  deleteProduct:
+    handler: functions/deleteProduct.handler
+
+custom:
+  env: ${file(../../.env.${sls:stage}.json)}
+  appSync:
+    apiId: ${self:custom.env.APPSYNC_API_ID}
+    schema: '../schemas/*.graphql'
+    mappingTemplatesLocation: mapping-templates
+    mappingTemplates:
+      - type: Query
+        field: getProduct
+        dataSource: getProductFunction
+        request: false
+        response: ../../../common/utils/vtl-templates/common.response.vtl
+      - type: Mutation
+        field: createProduct
+        dataSource: createProductFunction
+        request: false
+        response: ../../../common/utils/vtl-templates/common.response.vtl
+      - type: Mutation
+        field: updateProduct
+        dataSource: updateProductFunction
+        request: false
+        response: ../../../common/utils/vtl-templates/common.response.vtl
+      - type: Mutation
+        field: deleteProduct
+        dataSource: deleteProductFunction
+        request: false
+        response: ../../../common/utils/vtl-templates/common.response.vtl
+    dataSources:
+      - type: AWS_LAMBDA
+        name: getProductFunction
+        config:
+          functionName: getProduct
+      - type: AWS_LAMBDA
+        name: createProductFunction
+        config:
+          functionName: createProduct
+      - type: AWS_LAMBDA
+        name: updateProductFunction
+        config:
+          functionName: updateProduct
+      - type: AWS_LAMBDA
+        name: deleteProductFunction
+        config:
+          functionName: deleteProduct

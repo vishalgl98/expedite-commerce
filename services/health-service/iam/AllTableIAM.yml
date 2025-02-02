@@ -1,0 +1,10 @@
+AllTableIAM:
+  Effect: "Allow"
+  Action:
+    - dynamodb:Query
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+
+  Resource:
+    - "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+    - "arn:aws:dynamodb:${self:provider.region}:*:table/*/index/*"

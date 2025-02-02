@@ -1,0 +1,15 @@
+{
+  "name": "node-modules-layer",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Contains all the modules required in serverless functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vishal Goyal",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^10.0.0"
+  }
+}

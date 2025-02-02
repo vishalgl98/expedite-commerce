@@ -1,0 +1,11 @@
+ProductTaxonomyAttributes:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ProductTaxonomyAttributes-${sls:stage}
+    AttributeDefinitions:
+      - AttributeName: TaxonomyId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: TaxonomyId
+        KeyType: HASH
+    BillingMode: PAY_PER_REQUEST

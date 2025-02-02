@@ -1,0 +1,6 @@
+deploymentBucket:
+  name: expedite-commerce-deployment-${sls:stage}
+  maxPreviousDeploymentArtifacts: 3
+  blockPublicAccess: true
+  serverSideEncryption: AES256
+  versioning: true
