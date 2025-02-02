@@ -6,11 +6,10 @@ phases:
       nodejs: 20
     commands:
       - echo "Installing dependencies..."
-      - npm install -g serverless
+      - npm uninstall -g serverless  # Uninstall current Serverless version
+      - npm install -g serverless@3  # Install Serverless Framework v3.x
       - npm install
       - echo "Installing jq..."
-
-      # Download and install jq in a writable directory
       - curl -Lo /tmp/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
       - chmod +x /tmp/jq
       - export PATH=$PATH:/tmp  # Add /tmp to the PATH to make jq accessible globally
