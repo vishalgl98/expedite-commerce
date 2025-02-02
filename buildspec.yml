@@ -11,7 +11,9 @@ phases:
   build:
     commands:
       - echo "Building the project..."
-      - sls deploy
+      - cd services/product-service
+      - ls -l  # Check if serverless.yml exists
+      - serverless deploy --verbose
 
 artifacts:
   files:
