@@ -9,8 +9,17 @@ phases:
       - npm install -g serverless
       - npm install
       - echo "Installing jq..."
-      - amazon-linux-extras install epel -y  # Enable Extra Packages for Enterprise Linux (EPEL)
-      - yum install -y jq  # Install jq using yum (no sudo needed)
+
+      # Check for Amazon Linux and install jq accordingly
+      - if [ -f /etc/os-release ] && grep -q "Amazon Linux" /etc/os-release; then
+          echo "Detected Amazon Linux. Installing jq using yum.";
+          yum install -y jq;
+        elif [ -f /etc/os-release ] && grep -q "Ubuntu" /etc/os-release; then
+          echo "Detected Ubuntu. Installing jq using apt-get.";
+          apt-get update && apt-get install -y jq;
+        else
+          echo "Unknown OS. Unable to install jq.";
+        fi
 
   pre_build:
     commands:
