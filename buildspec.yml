@@ -5,14 +5,38 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
+      - echo "Installing dependencies..."
       - npm install -g serverless
       - npm install
+      - yum install -y jq  # Install jq to parse JSON
+
+  pre_build:
+    commands:
+      - echo "Fetching secrets from AWS Secrets Manager..."
+      - export SECRETS_JSON=$(aws secretsmanager get-secret-value --secret-id env.dev.json --query SecretString --output text)
+      - export AWS_REGION=$(echo $SECRETS_JSON | jq -r '.AWS_REGION')
+      - export AWS_ACCESS_KEY_ID=$(echo $SECRETS_JSON | jq -r '.AWS_ACCESS_KEY_ID')
+      - export AWS_SECRET_ACCESS_KEY=$(echo $SECRETS_JSON | jq -r '.AWS_SECRET_ACCESS_KEY')
+      - export NML_V=$(echo $SECRETS_JSON | jq -r '.NML_V')
+      - export MEMORY_SIZE=$(echo $SECRETS_JSON | jq -r '.MEMORY_SIZE')
+      - export APPSYNC_API_ID=$(echo $SECRETS_JSON | jq -r '.APPSYNC_API_ID')
 
   build:
     commands:
-      - echo "Building the project..."
+      - echo "Creating .env.dev.json at the root level..."
+      - echo '{ 
+          "AWS_REGION": "'$AWS_REGION'", 
+          "AWS_ACCESS_KEY_ID": "'$AWS_ACCESS_KEY_ID'", 
+          "AWS_SECRET_ACCESS_KEY": "'$AWS_SECRET_ACCESS_KEY'", 
+          "NML_V": "'$NML_V'", 
+          "MEMORY_SIZE": "'$MEMORY_SIZE'", 
+          "APPSYNC_API_ID": "'$APPSYNC_API_ID'" 
+        }' > .env.dev.json
+      - echo "Navigating to product-service directory..."
       - cd services/product-service
-      - ls -l  # Check if serverless.yml exists
+      - echo "Checking serverless.yml existence..."
+      - ls -l  # Debugging check
+      - echo "Deploying with Serverless..."
       - serverless deploy --verbose
 
 artifacts:
