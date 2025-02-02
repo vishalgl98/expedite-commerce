@@ -13,7 +13,7 @@ phases:
   pre_build:
     commands:
       - echo "Fetching secrets from AWS Secrets Manager..."
-      - export SECRETS_JSON=$(aws secretsmanager get-secret-value --secret-id env.dev.json --query SecretString --output text)
+      - export SECRETS_JSON=$(aws secretsmanager get-secret-value --secret-id expedite-commerce-env --query SecretString --output text)
       - export AWS_REGION=$(echo $SECRETS_JSON | jq -r '.AWS_REGION')
       - export AWS_ACCESS_KEY_ID=$(echo $SECRETS_JSON | jq -r '.AWS_ACCESS_KEY_ID')
       - export AWS_SECRET_ACCESS_KEY=$(echo $SECRETS_JSON | jq -r '.AWS_SECRET_ACCESS_KEY')
@@ -24,13 +24,15 @@ phases:
   build:
     commands:
       - echo "Creating .env.dev.json at the root level..."
-      - echo '{ 
-          "AWS_REGION": "'$AWS_REGION'", 
-          "AWS_ACCESS_KEY_ID": "'$AWS_ACCESS_KEY_ID'", 
-          "AWS_SECRET_ACCESS_KEY": "'$AWS_SECRET_ACCESS_KEY'", 
-          "NML_V": "'$NML_V'", 
-          "MEMORY_SIZE": "'$MEMORY_SIZE'", 
-          "APPSYNC_API_ID": "'$APPSYNC_API_ID'" 
+      # Use the correct syntax for creating the .env.dev.json file
+      - |
+        echo '{
+          "AWS_REGION": "'$AWS_REGION'",
+          "AWS_ACCESS_KEY_ID": "'$AWS_ACCESS_KEY_ID'",
+          "AWS_SECRET_ACCESS_KEY": "'$AWS_SECRET_ACCESS_KEY'",
+          "NML_V": "'$NML_V'",
+          "MEMORY_SIZE": "'$MEMORY_SIZE'",
+          "APPSYNC_API_ID": "'$APPSYNC_API_ID'"
         }' > .env.dev.json
       - echo "Navigating to product-service directory..."
       - cd services/product-service
