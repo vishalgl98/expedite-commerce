@@ -9,8 +9,9 @@ phases:
       - npm install -g serverless
       - npm install
       - echo "Installing jq..."
-      - sudo amazon-linux-extras install epel -y  # Enable Extra Packages for Enterprise Linux (EPEL)
-      - sudo yum install -y jq  # Install jq using yum
+      - amazon-linux-extras install epel -y  # Enable Extra Packages for Enterprise Linux (EPEL)
+      - yum install -y jq  # Install jq using yum (no sudo needed)
+
   pre_build:
     commands:
       - echo "Fetching secrets from AWS Secrets Manager..."
