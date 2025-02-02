@@ -8,7 +8,7 @@ phases:
       - echo "Installing dependencies..."
       - npm install -g serverless
       - npm install
-      - yum install -y jq  # Install jq to parse JSON
+      - apt-get update && apt-get install -y jq  # Use apt-get instead of yum to install jq
 
   pre_build:
     commands:
@@ -24,7 +24,6 @@ phases:
   build:
     commands:
       - echo "Creating .env.dev.json at the root level..."
-      # Use the correct syntax for creating the .env.dev.json file
       - |
         echo '{
           "AWS_REGION": "'$AWS_REGION'",
