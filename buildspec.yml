@@ -10,16 +10,10 @@ phases:
       - npm install
       - echo "Installing jq..."
 
-      # Check for Amazon Linux and install jq accordingly
-      - if [ -f /etc/os-release ] && grep -q "Amazon Linux" /etc/os-release; then
-          echo "Detected Amazon Linux. Installing jq using yum.";
-          yum install -y jq;
-        elif [ -f /etc/os-release ] && grep -q "Ubuntu" /etc/os-release; then
-          echo "Detected Ubuntu. Installing jq using apt-get.";
-          apt-get update && apt-get install -y jq;
-        else
-          echo "Unknown OS. Unable to install jq.";
-        fi
+      # Download and install jq manually
+      - curl -Lo jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+      - chmod +x jq
+      - mv jq /usr/local/bin/jq  # Move jq to /usr/local/bin so it can be accessed globally
 
   pre_build:
     commands:
