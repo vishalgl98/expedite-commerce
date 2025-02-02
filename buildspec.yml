@@ -10,10 +10,10 @@ phases:
       - npm install
       - echo "Installing jq..."
 
-      # Download and install jq manually
-      - curl -Lo jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-      - chmod +x jq
-      - mv jq /usr/local/bin/jq  # Move jq to /usr/local/bin so it can be accessed globally
+      # Download and install jq in a writable directory
+      - curl -Lo /tmp/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+      - chmod +x /tmp/jq
+      - export PATH=$PATH:/tmp  # Add /tmp to the PATH to make jq accessible globally
 
   pre_build:
     commands:
