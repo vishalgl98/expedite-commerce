@@ -1,3 +1,30 @@
+enum ProductCategory {
+  ELECTRONICS
+  CLOTHING
+  BOOKS
+}
+
+enum ProductSubCategory {
+  # Electronics
+  SMARTPHONES
+  LAPTOPS
+  TABLETS
+  ACCESSORIES
+  
+  # Clothing
+  MENS_WEAR
+  WOMENS_WEAR
+  KIDS_WEAR
+  FOOTWEAR
+  
+  # Books
+  FICTION
+  NON_FICTION
+  EDUCATIONAL
+  COMICS
+  
+}
+
 type Product {
   ProductId: String
   Name: String
@@ -17,6 +44,7 @@ type Mutation {
   createProduct(input: ProductInput): Response
   updateProduct(input: ProductInput): Response
   deleteProduct(input: ProductInput): Response
+  createCategory(input: CategoryInput): Response
 }
 
 input ProductInput {
@@ -26,6 +54,13 @@ input ProductInput {
   Price: Float
   Category: String
   Stock: Int
+}
+
+input CategoryInput {
+  TaxonomyId: String
+  Name: String
+  Description: String
+  ParentId: String
 }
 
 type Response {
